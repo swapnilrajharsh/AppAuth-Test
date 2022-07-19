@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.browser.customtabs.CustomTabsIntent
 import com.auth0.android.jwt.JWT
 import com.poc.appauthtest.Utils.Constants
 import net.openid.appauth.*
@@ -58,10 +59,11 @@ class MainActivity : AppCompatActivity() {
                 )
             ).build()
 
-        authorizationService = AuthorizationService(
+        /*authorizationService = AuthorizationService(
             application,
             appAuthConfiguration
-        )
+        )*/
+        authorizationService = AuthorizationService(this)
     }
 
     private fun initViews() {
@@ -97,7 +99,9 @@ class MainActivity : AppCompatActivity() {
             Constants.SCOPE_DRIVE)
 
         val request = builder.build()
-        val authIntent = authorizationService.getAuthorizationRequestIntent(request)
+        val intentBuilder = authorizationService.createCustomTabsIntentBuilder(request.toUri())
+        val mAuthIntent : CustomTabsIntent = intentBuilder.build()
+        val authIntent = authorizationService.getAuthorizationRequestIntent(request, mAuthIntent)
         launcher.launch(authIntent)
     }
 
